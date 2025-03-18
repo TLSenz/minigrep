@@ -1,21 +1,19 @@
 use std::env;
+use std::env::{args, Args};
+use std::fs::File;
+use std::io::{BufRead, BufReader};
 use std::process::exit;
+mod lib;
+use crate::lib::{get_args, search_file, Config};
 
-fn get_args() -> Vec<String>{
-    let mut input:Vec<String> = vec![];
-    if env::args().len() != 3 {
-        println!("Please Provide all Necessary cli argument: cargo run [search_string][search_path]");
-        exit(1)
-    }
-    for arguments in env::args(){
-        input.push(arguments)
-    }
-    input
+fn main() {
+    let args:Vec<String> = env::args().collect();
+    let config: Config = Config::new(&args);
+    println!("{}", config.search_string);
+    println!("{}", config.search_path)
+
+
+
+
 }
 
-fn display_args(search_string: &String, search_path: &String){
-    println!("Search Query: {}", search_string);
-    println!("Search Path: {}", search_path)
-}
-
-fn main() {}
