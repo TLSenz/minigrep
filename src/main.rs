@@ -1,9 +1,17 @@
 use std::env;
+use std::env::args;
 use std::process::exit;
-
-
+use minigrep::{search_file, Config};
 
 fn main() {
+    let args:Vec<String> = args().collect();
+
+    let config:Config = Config::new(&args);
+    let result:Vec<String> = search_file(&config);
+
+    for n in result.iter(){
+        println!("{}",n);
+    }
 
 }
 fn get_args() -> Vec<String>{

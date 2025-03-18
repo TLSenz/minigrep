@@ -7,71 +7,83 @@ use std::fs::File;
 use std::io::{BufRead, BufReader};
 use std::process::exit;
 
-pub fn get_args() -> Vec<String>{
-    let mut input:Vec<String> = vec![];
-    if env::args().len() != 3 {
-        println!("Please Provide all Necessary cli argument: cargo run [search_string][search_path]");
-        exit(1)
-    }
-    for arguments in env::args(){
-        input.push(arguments)
-    }
-    input
-}
-pub fn display_args(search_string: &String, search_path: &String){
-    println!("Search Query: {}", search_string);
-    println!("Search Path: {}", search_path)
-}
 
-pub fn search_file(search_query:&String,search_path: &String)-> Vec<String>{
-    let result:Vec<String> = Vec::new();
-    let file = File::open(search_path);
-    match file {
-        Ok(file) => {
+
+
+pub fn search_file(config: &Config)-> Vec<String>{
+    let mut line_lowercase;
+    let mut result:Vec<String> = Vec::new();
+    let mut search_string:String;
+    if config.case_sensitive == true{
+        search_string = config.search_string.clone().to_lowercase();
+    }
+    else {
+        search_string = config.search_string.clone();
+
+    }
+
+
+    println!("Trying to open file: {}", config.search_path);
+    let file = File::open(&config.search_path).unwrap_or_else(|_| {
+        println!("File to Search does not exist");
+        exit(1);
+    });
+
             let reader = BufReader::new(file);
             for line in reader.lines(){
-                match line.find() {
-                    Some(index) => {
+                let mut line = line.unwrap_or_else(|_| {
+                    println!("Could not Read Line in File");
+                    exit(1);
+                });
 
-                    }
+                if config.case_sensitive == true{
+                    line_lowercase = line.to_lowercase();
+
                 }
 
-        }
-            Err(E)=> {
-            println!("Please Enter a valid File");
-            exit(1);
-        }
-    }
+               if line_lowercase.contains(&search_string){
+                   result.push(line)
 
-        _ => {
-            exit(1);
         }
-    }
 
-    text
+    }
+    result
 }
+
+
 
 pub struct Config{
     pub search_string: String,
     pub search_path: String,
+    pub case_sensitive: bool
 
 }
 impl Config {
     pub fn new(args: &Vec<String>) -> Self {
-        // Check that there are exactly 3 arguments passed
+        let mut is_case_sensitiv:bool = false;
+
         if args.len() != 3 {
-            println!("Please provide all necessary CLI arguments: cargo run [search_string] [search_path]");
-            exit(1)
+            if args.len() != 4 && args[3] != "IGNORE_CASE" {
+                println!("Please provide all necessary CLI arguments: cargo run [search_string] [search_path] Hello");
+                exit(1);
+
+            }
+            else {
+                is_case_sensitiv = true;
+            }
+
+
         }
 
-        // Extract the arguments (since we know they exist after the length check)
-        let search_string = args[1].clone();  // Clone to take ownership
+
+        let search_string = args[1].clone();
         let search_path = args[2].clone();
 
         // Return a Config instance
         Config {
             search_string,
             search_path,
+            case_sensitive: is_case_sensitiv,
         }
     }
 }
