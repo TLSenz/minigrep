@@ -1,6 +1,10 @@
 use std::env;
 use std::process::exit;
 
+fn main() {
+
+}
+
 fn get_args() -> Vec<String>{
     let mut input:Vec<String> = vec![];
     if env::args().len() != 3 {
@@ -18,4 +22,3 @@ fn display_args(search_string: &String, search_path: &String){
     println!("Search Path: {}", search_path)
 }
 
-fn main() {}
