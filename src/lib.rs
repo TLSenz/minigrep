@@ -2,6 +2,7 @@ mod test;
 
 use std::env;
 use std::env::Args;
+use std::f32::consts::E;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 use std::process::exit;
@@ -22,13 +23,29 @@ pub fn display_args(search_string: &String, search_path: &String){
     println!("Search Path: {}", search_path)
 }
 
-pub fn search_file(search_path: &String)-> Vec<String>{
-    println!("Search Path: {}", search_path);
-    let file = File::open(search_path).expect("Your File does not exist");
-    let reader = BufReader::new(file);
-    let mut  text:Vec<String> = Vec::new();
-    for line in reader.lines(){
-        text.push(line.unwrap());
+pub fn search_file(search_query:&String,search_path: &String)-> Vec<String>{
+    let result:Vec<String> = Vec::new();
+    let file = File::open(search_path);
+    match file {
+        Ok(file) => {
+            let reader = BufReader::new(file);
+            for line in reader.lines(){
+                match line.find() {
+                    Some(index) => {
+
+                    }
+                }
+
+        }
+            Err(E)=> {
+            println!("Please Enter a valid File");
+            exit(1);
+        }
+    }
+
+        _ => {
+            exit(1);
+        }
     }
 
     text
